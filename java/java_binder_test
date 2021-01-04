@@ -1,0 +1,6 @@
+# shell.
+# -agentlib:jdwp=transport=dt_socket,suspend=y,server=y,address=5005
+base=/system
+export CLASSPATH=$base/framework/java_binder_test.jar
+exec app_process $base/bin demo.Main "$@"
+
