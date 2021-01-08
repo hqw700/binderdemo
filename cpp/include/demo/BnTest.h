@@ -4,12 +4,14 @@
 #include <binder/IInterface.h>
 #include <demo/ITest.h>
 
+using namespace android;
 namespace demo {
 
-class BnTest : public ::android::BnInterface<ITest> {
-public:
-::android::status_t onTransact(uint32_t _aidl_code, const ::android::Parcel& _aidl_data, ::android::Parcel* _aidl_reply, uint32_t _aidl_flags = 0) override;
-};  // class BnTest
+    class BnTest : public BnInterface<ITest> {
+    public:
+        status_t onTransact(uint32_t _aidl_code, const Parcel &_aidl_data, Parcel *_aidl_reply,
+                            uint32_t _aidl_flags = 0) override;
+    };  // class BnTest
 
 }  // namespace demo
 

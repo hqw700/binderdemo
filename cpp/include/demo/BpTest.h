@@ -6,15 +6,20 @@
 #include <utils/Errors.h>
 #include <demo/ITest.h>
 
+using namespace android;
+
 namespace demo {
 
-class BpTest : public ::android::BpInterface<ITest> {
-public:
-explicit BpTest(const ::android::sp<::android::IBinder>& _aidl_impl);
-virtual ~BpTest() = default;
-::android::binder::Status ping() override;
-::android::binder::Status sum(int32_t x, int32_t y, int32_t* _aidl_return) override;
-};  // class BpTest
+    class BpTest : public BpInterface<ITest> {
+    public:
+        explicit BpTest(const sp<IBinder> &_aidl_impl);
+
+        virtual ~BpTest() = default;
+
+        binder::Status ping() override;
+
+        binder::Status sum(int32_t x, int32_t y, int32_t *_aidl_return) override;
+    };  // class BpTest
 
 }  // namespace demo
 

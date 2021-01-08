@@ -1,11 +1,4 @@
-
-
-#define LOG_TAG "binder_demo"
-
-/* For relevant code see:
-    frameworks/native/{include,libs}/binder/{IInterface,Parcel}.{h,cpp}
-    system/core/include/utils/{Errors,RefBase}.h
- */
+#define LOG_TAG "cpp_binder"
 
 #include <stdlib.h>
 
@@ -21,8 +14,9 @@
 #include <demo/ITest.h>
 #include <demo/BnTest.h>
 
-using namespace android;
+#define BINDER_NAME "test_server"
 
+using namespace android;
 
 #define INFO(...) \
     do { \
@@ -44,32 +38,41 @@ void assert_fail(const char *file, int line, const char *func, const char *expr)
             assert_fail(__FILE__, __LINE__, __func__, #e); \
     } while(0)
 
-
-// Where to print the parcel contents: aout, alog, aerr. alog doesn't seem to work.
-#define PLOG aout
-
-
+// ################# For binder server start #####################
 class Test : public demo::BnTest {
 public:
     binder::Status ping() override {
-        ALOGD("test function");
+        INFO("ping receive ok");
         return android::binder::Status();
     }
 
     binder::Status sum(int32_t v1, int32_t v2, int32_t *_aidl_return) override {
-        ALOGD("get function: %d %d", v1, v2);
-        *_aidl_return = 333;
+        INFO("sum: %d + %d", v1, v2);
+        *_aidl_return = v1 + v2;
         return android::binder::Status();
     }
 };
+// ################# For binder server end #####################
 
 int main(int argc, char **argv) {
-    ALOGD("hello world!");
-    defaultServiceManager()->addService(String16("test_server"), new Test());
-    android::ProcessState::self()->startThreadPool();
-    ALOGD("Demo service is now ready");
-    IPCThreadState::self()->joinThreadPool();
-    ALOGD("Demo service thread joined");
+    if (argc == 1) {
+        defaultServiceManager()->addService(String16(BINDER_NAME), new Test());
+        android::ProcessState::self()->startThreadPool();
+        INFO("This is TestServer");
+        IPCThreadState::self()->joinThreadPool();
+    } else if (argc == 3) {
+        INFO("We're the client:");
+        sp<IServiceManager> sm = defaultServiceManager();
+        ASSERT(sm != 0);
+        sp<IBinder> binder = sm->getService(String16(BINDER_NAME));
+        ASSERT(binder != 0);
+        sp<demo::ITest> test = interface_cast<demo::ITest>(binder);
+        ASSERT(test != 0);
+        test->ping();
+        int ret = 0;
+        test->sum(atoi(argv[1]), atoi(argv[2]), &ret);
+        INFO("We're the client: test->sum return: %d", ret);
+    }
     return 0;
 }
 
