@@ -42,14 +42,14 @@ void assert_fail(const char *file, int line, const char *func, const char *expr)
 class Test : public demo::BnTest {
 public:
     binder::Status ping() override {
-        INFO("ping receive ok");
-        return android::binder::Status();
+        INFO("server: ping receive ok");
+        return binder::Status();
     }
 
     binder::Status sum(int32_t v1, int32_t v2, int32_t *_aidl_return) override {
-        INFO("sum: %d + %d", v1, v2);
+        INFO("server: sum: %d + %d", v1, v2);
         *_aidl_return = v1 + v2;
-        return android::binder::Status();
+        return binder::Status();
     }
 };
 // ################# For binder server end #####################
@@ -57,21 +57,22 @@ public:
 int main(int argc, char **argv) {
     if (argc == 1) {
         defaultServiceManager()->addService(String16(BINDER_NAME), new Test());
-        android::ProcessState::self()->startThreadPool();
-        INFO("This is TestServer");
+        ProcessState::self()->startThreadPool();
+        INFO("server: This is TestServer");
         IPCThreadState::self()->joinThreadPool();
     } else if (argc == 3) {
-        INFO("We're the client:");
+        INFO("client: We're the client");
         sp<IServiceManager> sm = defaultServiceManager();
         ASSERT(sm != 0);
         sp<IBinder> binder = sm->getService(String16(BINDER_NAME));
         ASSERT(binder != 0);
         sp<demo::ITest> test = interface_cast<demo::ITest>(binder);
         ASSERT(test != 0);
+        INFO("client: ping");
         test->ping();
         int ret = 0;
         test->sum(atoi(argv[1]), atoi(argv[2]), &ret);
-        INFO("We're the client: test->sum return: %d", ret);
+        INFO("client: We're the client: test->sum return: %d", ret);
     }
     return 0;
 }
