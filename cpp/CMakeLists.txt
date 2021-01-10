@@ -9,4 +9,6 @@ include_directories(${ANDROID_ROOT}/frameworks/native/include)
 include_directories(${ANDROID_ROOT}/system/core/include)
 include_directories(${ANDROID_ROOT}/frameworks/base/include)
 
+file (GLOB_RECURSE BINDER_SOURCE ${ANDROID_ROOT}/frameworks/native/libs/binder/*.cpp)
+add_library(libbinder ${BINDER_SOURCE})
 add_executable(binderdemo ITest.cpp main.cpp)
