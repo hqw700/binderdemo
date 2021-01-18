@@ -51,6 +51,14 @@ public:
         *_aidl_return = v1 + v2;
         return binder::Status();
     }
+
+    status_t dump(int fd, const Vector<String16> &args) override {
+        String8 result;
+        result.append("test_server dump:\n");
+        result.append("this is cpp implementation\n");
+        write(fd, result.string(), result.size());
+        return NO_ERROR;
+    }
 };
 // ################# For binder server end #####################
 
