@@ -1,5 +1,6 @@
 package demo;
 
+import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.util.Log;
@@ -33,10 +34,20 @@ public class Main {
                 int ret = testClient.sum(v1, v2);
                 Log.d(TAG_C, String.format("sum (%d,%d) return %d", v1, v2, ret));
                 System.out.println(ret);
+
+                testClient.asBinder().linkToDeath(new IBinder.DeathRecipient() {
+                    @Override
+                    public void binderDied() {
+                        Log.d("binder", "binderDied calling~!");
+                        System.out.println("binderDied calling");
+                        System.exit(0);
+                    }
+                }, 0);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-            System.exit(0);
+            for (;;);
+//            System.exit(0);
         }
     }
 }
