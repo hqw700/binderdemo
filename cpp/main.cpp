@@ -62,47 +62,14 @@ public:
 };
 // ################# For binder server end #####################
 
-class ClientThread : public Thread, public IBinder::DeathRecipient
+class TestDeathRecipient : public IBinder::DeathRecipient
 {
-public:
-    void onFirstRef() {
-        INFO("function:  %s", __func__);
-        sp<IServiceManager> sm = defaultServiceManager();
-        ASSERT(sm != 0);
-        sp<IBinder> binder = sm->getService(String16(BINDER_NAME));
-        ASSERT(binder != 0);
-        binder->linkToDeath(this);
-        Thread::run("ClientThread");
-    }
-
-    void binderDied(const wp<IBinder> &who) override {
-        INFO("function:  %s", __func__);
-    }
-
-    ~ClientThread() override {
-        INFO("function:  %s", __func__);
-    }
-
-    void requestExit() override {
-        INFO("function:  %s", __func__);
-        Thread::requestExit();
-    }
-
-    status_t readyToRun() override {
-        INFO("function:  %s", __func__);
-        return Thread::readyToRun();
-    }
-
 private:
-    bool threadLoop() override {
-        while (1) {
-            INFO("function:  %s", __func__);
-            sleep(2);
-        }
-        return true;
-    }
+    virtual void binderDied(const wp<IBinder>& who) {
+        INFO("client: binderDied");
+        exit(EXIT_FAILURE);
+    };
 };
-
 
 int main(int argc, char **argv) {
     if (argc == 1) {
@@ -111,11 +78,16 @@ int main(int argc, char **argv) {
         INFO("server: This is TestServer");
         IPCThreadState::self()->joinThreadPool();
     } else if (argc == 3) {
+        sp<ProcessState> proc(ProcessState::self());
+        ProcessState::self()->startThreadPool();
         INFO("client: We're the client");
         sp<IServiceManager> sm = defaultServiceManager();
         ASSERT(sm != 0);
         sp<IBinder> binder = sm->getService(String16(BINDER_NAME));
         ASSERT(binder != 0);
+        sp<TestDeathRecipient> death = new TestDeathRecipient();
+        int link = binder->linkToDeath(death);
+	ASSERT(link == 0);
         sp<demo::ITest> test = interface_cast<demo::ITest>(binder);
         ASSERT(test != 0);
         INFO("client: ping");
@@ -123,10 +95,6 @@ int main(int argc, char **argv) {
         int ret = 0;
         test->sum(atoi(argv[1]), atoi(argv[2]), &ret);
         INFO("client: We're the client: test->sum return: %d", ret);
-    } else if (argc == 4) {
-        sp<ProcessState> proc(ProcessState::self());
-        ProcessState::self()->startThreadPool();
-        sp<ClientThread> test = new ClientThread();
         IPCThreadState::self()->joinThreadPool();
     }
     return 0;
