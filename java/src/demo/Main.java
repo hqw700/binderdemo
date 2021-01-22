@@ -25,8 +25,6 @@ public class Main {
                 System.exit(-1);
             }
             try {
-                Log.d(TAG_C, "ping");
-                testClient.ping();
 
                 int v1 = Integer.parseInt(args[0]);
                 int v2 = Integer.parseInt(args[1]);
@@ -43,6 +41,16 @@ public class Main {
                         System.exit(0);
                     }
                 }, 0);
+
+                testClient.register(new ICallback.Stub() {
+                    @Override
+                    public void onCallback(String str) throws RemoteException {
+                        Log.d(TAG_C, "This is onCallback");
+                    }
+                });
+
+                Log.d(TAG_C, "ping, 5s callback");
+                testClient.ping();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
