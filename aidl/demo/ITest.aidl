@@ -5,6 +5,6 @@ interface ITest
 {
     void ping();
     int sum(int x, int y);
-    void register(ICallback cb);
-    void unregister(ICallback cb);
+    void registerCallback(ICallback cb);
+    void unregisterCallback(ICallback cb);
 }

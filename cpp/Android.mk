@@ -3,7 +3,8 @@ include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES:= \
     main.cpp \
-    ITest.cpp
+    ITest.cpp \
+    ICallback.cpp
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
 

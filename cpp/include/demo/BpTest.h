@@ -19,6 +19,10 @@ namespace demo {
         binder::Status ping() override;
 
         binder::Status sum(int32_t x, int32_t y, int32_t *_aidl_return) override;
+
+        binder::Status registerCallback(const sp<::demo::ICallback> &cb) override;
+
+        binder::Status unregisterCallback(const sp<::demo::ICallback> &cb) override;
     };  // class BpTest
 
 }  // namespace demo

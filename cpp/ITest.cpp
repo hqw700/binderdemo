@@ -76,6 +76,64 @@ namespace demo {
         return _aidl_status;
     }
 
+    binder::Status BpTest::registerCallback(const sp<::demo::ICallback> &cb) {
+        Parcel _aidl_data;
+        Parcel _aidl_reply;
+        status_t _aidl_ret_status = OK;
+        binder::Status _aidl_status;
+        _aidl_ret_status = _aidl_data.writeInterfaceToken(getInterfaceDescriptor());
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        _aidl_ret_status = _aidl_data.writeStrongBinder(::demo::ICallback::asBinder(cb));
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        _aidl_ret_status = remote()->transact(ITest::REGISTERCALLBACK, _aidl_data, &_aidl_reply);
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        _aidl_ret_status = _aidl_status.readFromParcel(_aidl_reply);
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        if (!_aidl_status.isOk()) {
+            return _aidl_status;
+        }
+        _aidl_error:
+        _aidl_status.setFromStatusT(_aidl_ret_status);
+        return _aidl_status;
+    }
+
+    binder::Status BpTest::unregisterCallback(const sp<::demo::ICallback> &cb) {
+        Parcel _aidl_data;
+        Parcel _aidl_reply;
+        status_t _aidl_ret_status = OK;
+        binder::Status _aidl_status;
+        _aidl_ret_status = _aidl_data.writeInterfaceToken(getInterfaceDescriptor());
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        _aidl_ret_status = _aidl_data.writeStrongBinder(::demo::ICallback::asBinder(cb));
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        _aidl_ret_status = remote()->transact(ITest::UNREGISTERCALLBACK, _aidl_data, &_aidl_reply);
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        _aidl_ret_status = _aidl_status.readFromParcel(_aidl_reply);
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        if (!_aidl_status.isOk()) {
+            return _aidl_status;
+        }
+        _aidl_error:
+        _aidl_status.setFromStatusT(_aidl_ret_status);
+        return _aidl_status;
+    }
+
 }  // namespace demo
 #include <demo/BnTest.h>
 #include <binder/Parcel.h>
@@ -127,6 +185,46 @@ namespace demo {
                 }
                 _aidl_ret_status = _aidl_reply->writeInt32(_aidl_return);
                 if (((_aidl_ret_status) != (OK))) {
+                    break;
+                }
+            }
+                break;
+            case Call::REGISTERCALLBACK: {
+                sp<::demo::ICallback> in_cb;
+                if (!(_aidl_data.checkInterface(this))) {
+                    _aidl_ret_status = BAD_TYPE;
+                    break;
+                }
+                _aidl_ret_status = _aidl_data.readStrongBinder(&in_cb);
+                if (((_aidl_ret_status) != (OK))) {
+                    break;
+                }
+                binder::Status _aidl_status(registerCallback(in_cb));
+                _aidl_ret_status = _aidl_status.writeToParcel(_aidl_reply);
+                if (((_aidl_ret_status) != (OK))) {
+                    break;
+                }
+                if (!_aidl_status.isOk()) {
+                    break;
+                }
+            }
+                break;
+            case Call::UNREGISTERCALLBACK: {
+                sp<::demo::ICallback> in_cb;
+                if (!(_aidl_data.checkInterface(this))) {
+                    _aidl_ret_status = BAD_TYPE;
+                    break;
+                }
+                _aidl_ret_status = _aidl_data.readStrongBinder(&in_cb);
+                if (((_aidl_ret_status) != (OK))) {
+                    break;
+                }
+                binder::Status _aidl_status(unregisterCallback(in_cb));
+                _aidl_ret_status = _aidl_status.writeToParcel(_aidl_reply);
+                if (((_aidl_ret_status) != (OK))) {
+                    break;
+                }
+                if (!_aidl_status.isOk()) {
                     break;
                 }
             }

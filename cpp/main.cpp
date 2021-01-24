@@ -13,6 +13,8 @@
 #include <binder/IPCThreadState.h>
 #include <demo/ITest.h>
 #include <demo/BnTest.h>
+#include <demo/BnCallback.h>
+#include <demo/ICallback.h>
 
 #define BINDER_NAME "test_server"
 
@@ -40,9 +42,39 @@ void assert_fail(const char *file, int line, const char *func, const char *expr)
 
 // ################# For binder server start #####################
 class Test : public demo::BnTest {
+    std::vector<sp<demo::ICallback>> mCallbackList;
 public:
     binder::Status ping() override {
         INFO("server: ping receive ok");
+        sleep(5);
+        INFO("server: onCallback");
+        for (auto& i : mCallbackList) {
+            i->onCallback(String16("test"));
+        }
+        return binder::Status();
+    }
+
+    binder::Status registerCallback(const sp<::demo::ICallback> &cb) override {
+        for (auto& it : mCallbackList) {
+            if (IInterface::asBinder(it) == IInterface::asBinder(cb)) {
+                INFO("%s: Tried to add callback %p which was already subscribed",
+                     __FUNCTION__, cb.get());
+                return binder::Status();
+            }
+        }
+
+        mCallbackList.push_back(cb);
+        return binder::Status();
+    }
+
+    binder::Status unregisterCallback(const sp<::demo::ICallback> &cb) override {
+        for (auto it = mCallbackList.begin(); it != mCallbackList.end(); it++) {
+            if (IInterface::asBinder(*it) == IInterface::asBinder(cb)) {
+                mCallbackList.erase(it);
+                INFO("server: unregisterCallback ok");
+                return binder::Status().ok();
+            }
+        }
         return binder::Status();
     }
 
@@ -61,6 +93,13 @@ public:
     }
 };
 // ################# For binder server end #####################
+class CallbackTest : public demo::BnCallback {
+public:
+    binder::Status onCallback(const String16 &str) override {
+        INFO("client: onCallback, receive str: %s", String8(str).string());
+        return binder::Status();
+    }
+};
 
 class TestDeathRecipient : public IBinder::DeathRecipient
 {
@@ -87,14 +126,22 @@ int main(int argc, char **argv) {
         ASSERT(binder != 0);
         sp<TestDeathRecipient> death = new TestDeathRecipient();
         int link = binder->linkToDeath(death);
-	ASSERT(link == 0);
+        ASSERT(link == 0);
         sp<demo::ITest> test = interface_cast<demo::ITest>(binder);
         ASSERT(test != 0);
-        INFO("client: ping");
-        test->ping();
+
         int ret = 0;
         test->sum(atoi(argv[1]), atoi(argv[2]), &ret);
         INFO("client: We're the client: test->sum return: %d", ret);
+
+        sp<CallbackTest> callback = new CallbackTest();
+        test->registerCallback(callback);
+        INFO("client: ping, 5s callback");
+        test->ping();
+
+        test->unregisterCallback(callback);
+        INFO("client: ping again, 5s callback");
+        test->ping();
         IPCThreadState::self()->joinThreadPool();
     }
     return 0;
