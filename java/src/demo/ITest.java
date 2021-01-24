@@ -62,19 +62,19 @@ public interface ITest extends android.os.IInterface {
                     reply.writeInt(_result);
                     return true;
                 }
-                case TRANSACTION_register: {
+                case TRANSACTION_registerCallback: {
                     data.enforceInterface(DESCRIPTOR);
                     demo.ICallback _arg0;
                     _arg0 = demo.ICallback.Stub.asInterface(data.readStrongBinder());
-                    this.register(_arg0);
+                    this.registerCallback(_arg0);
                     reply.writeNoException();
                     return true;
                 }
-                case TRANSACTION_unregister: {
+                case TRANSACTION_unregisterCallback: {
                     data.enforceInterface(DESCRIPTOR);
                     demo.ICallback _arg0;
                     _arg0 = demo.ICallback.Stub.asInterface(data.readStrongBinder());
-                    this.unregister(_arg0);
+                    this.unregisterCallback(_arg0);
                     reply.writeNoException();
                     return true;
                 }
@@ -132,13 +132,13 @@ public interface ITest extends android.os.IInterface {
             }
 
             @Override
-            public void register(demo.ICallback cb) throws android.os.RemoteException {
+            public void registerCallback(demo.ICallback cb) throws android.os.RemoteException {
                 android.os.Parcel _data = android.os.Parcel.obtain();
                 android.os.Parcel _reply = android.os.Parcel.obtain();
                 try {
                     _data.writeInterfaceToken(DESCRIPTOR);
                     _data.writeStrongBinder((((cb != null)) ? (cb.asBinder()) : (null)));
-                    mRemote.transact(Stub.TRANSACTION_register, _data, _reply, 0);
+                    mRemote.transact(Stub.TRANSACTION_registerCallback, _data, _reply, 0);
                     _reply.readException();
                 } finally {
                     _reply.recycle();
@@ -147,13 +147,13 @@ public interface ITest extends android.os.IInterface {
             }
 
             @Override
-            public void unregister(demo.ICallback cb) throws android.os.RemoteException {
+            public void unregisterCallback(demo.ICallback cb) throws android.os.RemoteException {
                 android.os.Parcel _data = android.os.Parcel.obtain();
                 android.os.Parcel _reply = android.os.Parcel.obtain();
                 try {
                     _data.writeInterfaceToken(DESCRIPTOR);
                     _data.writeStrongBinder((((cb != null)) ? (cb.asBinder()) : (null)));
-                    mRemote.transact(Stub.TRANSACTION_unregister, _data, _reply, 0);
+                    mRemote.transact(Stub.TRANSACTION_unregisterCallback, _data, _reply, 0);
                     _reply.readException();
                 } finally {
                     _reply.recycle();
@@ -164,15 +164,15 @@ public interface ITest extends android.os.IInterface {
 
         static final int TRANSACTION_ping = (android.os.IBinder.FIRST_CALL_TRANSACTION + 0);
         static final int TRANSACTION_sum = (android.os.IBinder.FIRST_CALL_TRANSACTION + 1);
-        static final int TRANSACTION_register = (android.os.IBinder.FIRST_CALL_TRANSACTION + 2);
-        static final int TRANSACTION_unregister = (android.os.IBinder.FIRST_CALL_TRANSACTION + 3);
+        static final int TRANSACTION_registerCallback = (android.os.IBinder.FIRST_CALL_TRANSACTION + 2);
+        static final int TRANSACTION_unregisterCallback = (android.os.IBinder.FIRST_CALL_TRANSACTION + 3);
     }
 
     public void ping() throws android.os.RemoteException;
 
     public int sum(int x, int y) throws android.os.RemoteException;
 
-    public void register(demo.ICallback cb) throws android.os.RemoteException;
+    public void registerCallback(demo.ICallback cb) throws android.os.RemoteException;
 
-    public void unregister(demo.ICallback cb) throws android.os.RemoteException;
+    public void unregisterCallback(demo.ICallback cb) throws android.os.RemoteException;
 }

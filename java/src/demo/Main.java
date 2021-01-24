@@ -42,7 +42,7 @@ public class Main {
                     }
                 }, 0);
 
-                testClient.register(new ICallback.Stub() {
+                testClient.registerCallback(new ICallback.Stub() {
                     @Override
                     public void onCallback(String str) throws RemoteException {
                         Log.d(TAG_C, "This is onCallback");

@@ -31,13 +31,13 @@ public class TestServer extends ITest.Stub {
     }
 
     @Override
-    public void register(ICallback cb) throws RemoteException {
+    public void registerCallback(ICallback cb) throws RemoteException {
         Log.d(TAG, "register " + cb);
         if (cb != null) mCallbacks.register(cb);
     }
 
     @Override
-    public void unregister(ICallback cb) throws RemoteException {
+    public void unregisterCallback(ICallback cb) throws RemoteException {
         if (cb != null) mCallbacks.unregister(cb);
     }
 
