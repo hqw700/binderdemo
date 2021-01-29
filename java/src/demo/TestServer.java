@@ -1,5 +1,6 @@
 package demo;
 
+import android.os.Bundle;
 import android.os.RemoteException;
 import android.os.RemoteCallbackList;
 import android.os.DeadObjectException;
@@ -22,6 +23,32 @@ public class TestServer extends ITest.Stub {
 
         Log.d(TAG, "ping doCallback");
         doCallback("ping");
+    }
+
+    @Override
+    public void pingOneway() throws RemoteException {
+
+    }
+
+    @Override
+    public void sendIn(Bundle data) throws RemoteException {
+        String rec = data.getString("data");
+        Log.d(TAG, "sendIn: receive: " + rec);
+        data.putString("data", rec + "server");
+    }
+
+    @Override
+    public void sendOut(Bundle data) throws RemoteException {
+        String rec = data.getString("data");
+        Log.d(TAG, "sendOut: receive: " + rec);
+        data.putString("data", rec + "server");
+    }
+
+    @Override
+    public void sendInOut(Bundle data) throws RemoteException {
+        String rec = data.getString("data");
+        Log.d(TAG, "sendInOut: receive: " + rec);
+        data.putString("data", rec + "server");
     }
 
     @Override

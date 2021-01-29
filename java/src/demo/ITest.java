@@ -51,6 +51,55 @@ public interface ITest extends android.os.IInterface {
                     reply.writeNoException();
                     return true;
                 }
+                case TRANSACTION_pingOneway: {
+                    data.enforceInterface(DESCRIPTOR);
+                    this.pingOneway();
+                    return true;
+                }
+                case TRANSACTION_sendIn: {
+                    data.enforceInterface(DESCRIPTOR);
+                    android.os.Bundle _arg0;
+                    if ((0 != data.readInt())) {
+                        _arg0 = android.os.Bundle.CREATOR.createFromParcel(data);
+                    } else {
+                        _arg0 = null;
+                    }
+                    this.sendIn(_arg0);
+                    reply.writeNoException();
+                    return true;
+                }
+                case TRANSACTION_sendOut: {
+                    data.enforceInterface(DESCRIPTOR);
+                    android.os.Bundle _arg0;
+                    _arg0 = new android.os.Bundle();
+                    this.sendOut(_arg0);
+                    reply.writeNoException();
+                    if ((_arg0 != null)) {
+                        reply.writeInt(1);
+                        _arg0.writeToParcel(reply, android.os.Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
+                    } else {
+                        reply.writeInt(0);
+                    }
+                    return true;
+                }
+                case TRANSACTION_sendInOut: {
+                    data.enforceInterface(DESCRIPTOR);
+                    android.os.Bundle _arg0;
+                    if ((0 != data.readInt())) {
+                        _arg0 = android.os.Bundle.CREATOR.createFromParcel(data);
+                    } else {
+                        _arg0 = null;
+                    }
+                    this.sendInOut(_arg0);
+                    reply.writeNoException();
+                    if ((_arg0 != null)) {
+                        reply.writeInt(1);
+                        _arg0.writeToParcel(reply, android.os.Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
+                    } else {
+                        reply.writeInt(0);
+                    }
+                    return true;
+                }
                 case TRANSACTION_sum: {
                     data.enforceInterface(DESCRIPTOR);
                     int _arg0;
@@ -113,6 +162,77 @@ public interface ITest extends android.os.IInterface {
             }
 
             @Override
+            public void pingOneway() throws android.os.RemoteException {
+                android.os.Parcel _data = android.os.Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    mRemote.transact(Stub.TRANSACTION_pingOneway, _data, null, android.os.IBinder.FLAG_ONEWAY);
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void sendIn(android.os.Bundle data) throws android.os.RemoteException {
+                android.os.Parcel _data = android.os.Parcel.obtain();
+                android.os.Parcel _reply = android.os.Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    if ((data != null)) {
+                        _data.writeInt(1);
+                        data.writeToParcel(_data, 0);
+                    } else {
+                        _data.writeInt(0);
+                    }
+                    mRemote.transact(Stub.TRANSACTION_sendIn, _data, _reply, 0);
+                    _reply.readException();
+                } finally {
+                    _reply.recycle();
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void sendOut(android.os.Bundle data) throws android.os.RemoteException {
+                android.os.Parcel _data = android.os.Parcel.obtain();
+                android.os.Parcel _reply = android.os.Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    mRemote.transact(Stub.TRANSACTION_sendOut, _data, _reply, 0);
+                    _reply.readException();
+                    if ((0 != _reply.readInt())) {
+                        data.readFromParcel(_reply);
+                    }
+                } finally {
+                    _reply.recycle();
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void sendInOut(android.os.Bundle data) throws android.os.RemoteException {
+                android.os.Parcel _data = android.os.Parcel.obtain();
+                android.os.Parcel _reply = android.os.Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    if ((data != null)) {
+                        _data.writeInt(1);
+                        data.writeToParcel(_data, 0);
+                    } else {
+                        _data.writeInt(0);
+                    }
+                    mRemote.transact(Stub.TRANSACTION_sendInOut, _data, _reply, 0);
+                    _reply.readException();
+                    if ((0 != _reply.readInt())) {
+                        data.readFromParcel(_reply);
+                    }
+                } finally {
+                    _reply.recycle();
+                    _data.recycle();
+                }
+            }
+
+            @Override
             public int sum(int x, int y) throws android.os.RemoteException {
                 android.os.Parcel _data = android.os.Parcel.obtain();
                 android.os.Parcel _reply = android.os.Parcel.obtain();
@@ -163,12 +283,24 @@ public interface ITest extends android.os.IInterface {
         }
 
         static final int TRANSACTION_ping = (android.os.IBinder.FIRST_CALL_TRANSACTION + 0);
-        static final int TRANSACTION_sum = (android.os.IBinder.FIRST_CALL_TRANSACTION + 1);
-        static final int TRANSACTION_registerCallback = (android.os.IBinder.FIRST_CALL_TRANSACTION + 2);
-        static final int TRANSACTION_unregisterCallback = (android.os.IBinder.FIRST_CALL_TRANSACTION + 3);
+        static final int TRANSACTION_pingOneway = (android.os.IBinder.FIRST_CALL_TRANSACTION + 1);
+        static final int TRANSACTION_sendIn = (android.os.IBinder.FIRST_CALL_TRANSACTION + 2);
+        static final int TRANSACTION_sendOut = (android.os.IBinder.FIRST_CALL_TRANSACTION + 3);
+        static final int TRANSACTION_sendInOut = (android.os.IBinder.FIRST_CALL_TRANSACTION + 4);
+        static final int TRANSACTION_sum = (android.os.IBinder.FIRST_CALL_TRANSACTION + 5);
+        static final int TRANSACTION_registerCallback = (android.os.IBinder.FIRST_CALL_TRANSACTION + 6);
+        static final int TRANSACTION_unregisterCallback = (android.os.IBinder.FIRST_CALL_TRANSACTION + 7);
     }
 
     public void ping() throws android.os.RemoteException;
+
+    public void pingOneway() throws android.os.RemoteException;
+
+    public void sendIn(android.os.Bundle data) throws android.os.RemoteException;
+
+    public void sendOut(android.os.Bundle data) throws android.os.RemoteException;
+
+    public void sendInOut(android.os.Bundle data) throws android.os.RemoteException;
 
     public int sum(int x, int y) throws android.os.RemoteException;
 

@@ -1,6 +1,8 @@
 package demo;
 
+import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Parcel;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.util.Log;
@@ -16,8 +18,9 @@ public class Main {
             Log.d(TAG_S, "This is TestServer");
             TestServer testServer = new TestServer();
             ServiceManager.addService(BINDER_NAME, testServer);
-            for (;;);
-        } else {
+        } else if ("inout".equals(args[0])){
+            inoutTest();
+        }else {
             Log.d(TAG_C, "This is TestClient");
             ITest testClient = ITest.Stub.asInterface(ServiceManager.getService(BINDER_NAME));
             if (testClient == null) {
@@ -54,8 +57,35 @@ public class Main {
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-            for (;;);
-//            System.exit(0);
+        }
+        for (;;);
+    }
+
+    private static void inoutTest() {
+        Log.d(TAG_C, "This is TestClient");
+        ITest testClient = ITest.Stub.asInterface(ServiceManager.getService(BINDER_NAME));
+        if (testClient == null) {
+            System.err.println("TestServer is null");
+            System.exit(-1);
+        }
+
+        try {
+            Bundle data_in = new Bundle();
+            data_in.putString("data", "client");
+            testClient.sendIn(data_in);
+            Log.d(TAG_C, "after sendIn: " + data_in.getString("data"));
+
+            Bundle data_out = new Bundle();
+            data_out.putString("data", "client");
+            testClient.sendOut(data_out);
+            Log.d(TAG_C, "after sendOut: " + data_out.getString("data"));
+
+            Bundle data_inout = new Bundle();
+            data_inout.putString("data", "client");
+            testClient.sendInOut(data_inout);
+            Log.d(TAG_C, "after sendInOut: " + data_inout.getString("data"));
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 }
