@@ -39,6 +39,116 @@ namespace demo {
         return _aidl_status;
     }
 
+    binder::Status BpTest::pingOneway() {
+        Parcel _aidl_data;
+        Parcel _aidl_reply;
+        status_t _aidl_ret_status = OK;
+        binder::Status _aidl_status;
+        _aidl_ret_status = _aidl_data.writeInterfaceToken(getInterfaceDescriptor());
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        _aidl_ret_status = remote()->transact(ITest::PINGONEWAY, _aidl_data, &_aidl_reply,
+                                              IBinder::FLAG_ONEWAY);
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        _aidl_error:
+        _aidl_status.setFromStatusT(_aidl_ret_status);
+        return _aidl_status;
+    }
+
+    binder::Status BpTest::sendIn(const os::PersistableBundle &data) {
+        Parcel _aidl_data;
+        Parcel _aidl_reply;
+        status_t _aidl_ret_status = OK;
+        binder::Status _aidl_status;
+        _aidl_ret_status = _aidl_data.writeInterfaceToken(getInterfaceDescriptor());
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        _aidl_ret_status = _aidl_data.writeParcelable(data);
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        _aidl_ret_status = remote()->transact(ITest::SENDIN, _aidl_data, &_aidl_reply);
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        _aidl_ret_status = _aidl_status.readFromParcel(_aidl_reply);
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        if (!_aidl_status.isOk()) {
+            return _aidl_status;
+        }
+        _aidl_error:
+        _aidl_status.setFromStatusT(_aidl_ret_status);
+        return _aidl_status;
+    }
+
+    binder::Status BpTest::sendOut(os::PersistableBundle *data) {
+        Parcel _aidl_data;
+        Parcel _aidl_reply;
+        status_t _aidl_ret_status = OK;
+        binder::Status _aidl_status;
+        _aidl_ret_status = _aidl_data.writeInterfaceToken(getInterfaceDescriptor());
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        _aidl_ret_status = remote()->transact(ITest::SENDOUT, _aidl_data, &_aidl_reply);
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        _aidl_ret_status = _aidl_status.readFromParcel(_aidl_reply);
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        if (!_aidl_status.isOk()) {
+            return _aidl_status;
+        }
+        _aidl_ret_status = _aidl_reply.readParcelable(data);
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        _aidl_error:
+        _aidl_status.setFromStatusT(_aidl_ret_status);
+        return _aidl_status;
+    }
+
+    binder::Status BpTest::sendInOut(os::PersistableBundle *data) {
+        Parcel _aidl_data;
+        Parcel _aidl_reply;
+        status_t _aidl_ret_status = OK;
+        binder::Status _aidl_status;
+        _aidl_ret_status = _aidl_data.writeInterfaceToken(getInterfaceDescriptor());
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        _aidl_ret_status = _aidl_data.writeParcelable(*data);
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        _aidl_ret_status = remote()->transact(ITest::SENDINOUT, _aidl_data, &_aidl_reply);
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        _aidl_ret_status = _aidl_status.readFromParcel(_aidl_reply);
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        if (!_aidl_status.isOk()) {
+            return _aidl_status;
+        }
+        _aidl_ret_status = _aidl_reply.readParcelable(data);
+        if (((_aidl_ret_status) != (OK))) {
+            goto _aidl_error;
+        }
+        _aidl_error:
+        _aidl_status.setFromStatusT(_aidl_ret_status);
+        return _aidl_status;
+    }
+
     binder::Status BpTest::sum(int32_t x, int32_t y, int32_t *_aidl_return) {
         Parcel _aidl_data;
         Parcel _aidl_reply;
@@ -155,6 +265,78 @@ namespace demo {
                     break;
                 }
                 if (!_aidl_status.isOk()) {
+                    break;
+                }
+            }
+                break;
+            case Call::PINGONEWAY: {
+                if (!(_aidl_data.checkInterface(this))) {
+                    _aidl_ret_status = BAD_TYPE;
+                    break;
+                }
+                binder::Status _aidl_status(pingOneway());
+            }
+                break;
+            case Call::SENDIN: {
+                os::PersistableBundle in_data;
+                if (!(_aidl_data.checkInterface(this))) {
+                    _aidl_ret_status = BAD_TYPE;
+                    break;
+                }
+                _aidl_ret_status = _aidl_data.readParcelable(&in_data);
+                if (((_aidl_ret_status) != (OK))) {
+                    break;
+                }
+                binder::Status _aidl_status(sendIn(in_data));
+                _aidl_ret_status = _aidl_status.writeToParcel(_aidl_reply);
+                if (((_aidl_ret_status) != (OK))) {
+                    break;
+                }
+                if (!_aidl_status.isOk()) {
+                    break;
+                }
+            }
+                break;
+            case Call::SENDOUT: {
+                os::PersistableBundle out_data;
+                if (!(_aidl_data.checkInterface(this))) {
+                    _aidl_ret_status = BAD_TYPE;
+                    break;
+                }
+                binder::Status _aidl_status(sendOut(&out_data));
+                _aidl_ret_status = _aidl_status.writeToParcel(_aidl_reply);
+                if (((_aidl_ret_status) != (OK))) {
+                    break;
+                }
+                if (!_aidl_status.isOk()) {
+                    break;
+                }
+                _aidl_ret_status = _aidl_reply->writeParcelable(out_data);
+                if (((_aidl_ret_status) != (OK))) {
+                    break;
+                }
+            }
+                break;
+            case Call::SENDINOUT: {
+                os::PersistableBundle in_data;
+                if (!(_aidl_data.checkInterface(this))) {
+                    _aidl_ret_status = BAD_TYPE;
+                    break;
+                }
+                _aidl_ret_status = _aidl_data.readParcelable(&in_data);
+                if (((_aidl_ret_status) != (OK))) {
+                    break;
+                }
+                binder::Status _aidl_status(sendInOut(&in_data));
+                _aidl_ret_status = _aidl_status.writeToParcel(_aidl_reply);
+                if (((_aidl_ret_status) != (OK))) {
+                    break;
+                }
+                if (!_aidl_status.isOk()) {
+                    break;
+                }
+                _aidl_ret_status = _aidl_reply->writeParcelable(in_data);
+                if (((_aidl_ret_status) != (OK))) {
                     break;
                 }
             }

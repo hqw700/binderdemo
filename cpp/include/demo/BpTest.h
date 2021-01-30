@@ -18,6 +18,14 @@ namespace demo {
 
         binder::Status ping() override;
 
+        binder::Status pingOneway() override;
+
+        binder::Status sendIn(const os::PersistableBundle &data) override;
+
+        binder::Status sendOut(os::PersistableBundle *data) override;
+
+        binder::Status sendInOut(os::PersistableBundle *data) override;
+
         binder::Status sum(int32_t x, int32_t y, int32_t *_aidl_return) override;
 
         binder::Status registerCallback(const sp<::demo::ICallback> &cb) override;

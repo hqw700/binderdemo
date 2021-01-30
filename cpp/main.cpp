@@ -54,6 +54,38 @@ public:
         return binder::Status();
     }
 
+    binder::Status pingOneway() override {
+
+        return binder::Status();
+    }
+
+    binder::Status sendIn(const os::PersistableBundle &data) override {
+        String16 rec;
+        data.getString(String16("data"), &rec);
+        INFO("server: sendIn: receive: %s", String8(rec).string());
+//        rec.append(String16("server"));
+//        data->putString(String16("data"), rec);
+        return binder::Status();
+    }
+
+    binder::Status sendOut(os::PersistableBundle *data) override {
+        String16 rec;
+        data->getString(String16("data"), &rec);
+        INFO("server: sendIn: receive: %s", String8(rec).string());
+        rec.append(String16("server"));
+        data->putString(String16("data"), rec);
+        return binder::Status();
+    }
+
+    binder::Status sendInOut(os::PersistableBundle *data) override {
+        String16 rec;
+        data->getString(String16("data"), &rec);
+        INFO("server: sendIn: receive: %s", String8(rec).string());
+        rec.append(String16("server"));
+        data->putString(String16("data"), rec);
+        return binder::Status();
+    }
+
     binder::Status registerCallback(const sp<::demo::ICallback> &cb) override {
         for (auto& it : mCallbackList) {
             if (IInterface::asBinder(it) == IInterface::asBinder(cb)) {
@@ -116,6 +148,52 @@ int main(int argc, char **argv) {
         ProcessState::self()->startThreadPool();
         INFO("server: This is TestServer");
         IPCThreadState::self()->joinThreadPool();
+    } else if (strcmp(argv[1], "inout") == 0) {
+        sp<ProcessState> proc(ProcessState::self());
+        ProcessState::self()->startThreadPool();
+        INFO("client: We're the client, inout test");
+        sp<IServiceManager> sm = defaultServiceManager();
+        ASSERT(sm != 0);
+        sp<IBinder> binder = sm->getService(String16(BINDER_NAME));
+        ASSERT(binder != 0);
+        sp<demo::ITest> test = interface_cast<demo::ITest>(binder);
+        ASSERT(test != 0);
+
+        os::PersistableBundle data_in;
+        data_in.putString(String16("data"),String16( "client"));
+        test->sendIn(data_in);
+        String16 ret_in;
+        data_in.getString(String16("data"), &ret_in);
+        INFO("client: after sendIn: %s", String8(ret_in).string());
+
+        os::PersistableBundle data_out;
+        data_out.putString(String16("data"),String16( "client"));
+        test->sendOut(&data_out);
+        String16 ret_out;
+        data_out.getString(String16("data"), &ret_out);
+        INFO("client: after sendOut: %s", String8(ret_out).string());
+
+        os::PersistableBundle data_inout;
+        data_inout.putString(String16("data"),String16( "client"));
+        test->sendInOut(&data_inout);
+        String16 ret_inout;
+        data_inout.getString(String16("data"), &ret_inout);
+        INFO("client: after sendInOut: %s", String8(ret_inout).string());
+//        Bundle data_out = new Bundle();
+//        data_out.putString("data", "client");
+//        testClient.sendIn(data_out);
+//        Log.d(TAG_C, "after sendIn: " + data_out.getString("data"));
+//
+//        Bundle data_out = new Bundle();
+//        data_out.putString("data", "client");
+//        testClient.sendOut(data_out);
+//        Log.d(TAG_C, "after sendOut: " + data_out.getString("data"));
+//
+//        Bundle data_inout = new Bundle();
+//        data_inout.putString("data", "client");
+//        testClient.sendInOut(data_inout);
+//        Log.d(TAG_C, "after sendInOut: " + data_inout.getString("data"));
+
     } else if (argc == 3) {
         sp<ProcessState> proc(ProcessState::self());
         ProcessState::self()->startThreadPool();
