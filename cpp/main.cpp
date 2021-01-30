@@ -179,21 +179,6 @@ int main(int argc, char **argv) {
         String16 ret_inout;
         data_inout.getString(String16("data"), &ret_inout);
         INFO("client: after sendInOut: %s", String8(ret_inout).string());
-//        Bundle data_out = new Bundle();
-//        data_out.putString("data", "client");
-//        testClient.sendIn(data_out);
-//        Log.d(TAG_C, "after sendIn: " + data_out.getString("data"));
-//
-//        Bundle data_out = new Bundle();
-//        data_out.putString("data", "client");
-//        testClient.sendOut(data_out);
-//        Log.d(TAG_C, "after sendOut: " + data_out.getString("data"));
-//
-//        Bundle data_inout = new Bundle();
-//        data_inout.putString("data", "client");
-//        testClient.sendInOut(data_inout);
-//        Log.d(TAG_C, "after sendInOut: " + data_inout.getString("data"));
-
     } else if (argc == 3) {
         sp<ProcessState> proc(ProcessState::self());
         ProcessState::self()->startThreadPool();
