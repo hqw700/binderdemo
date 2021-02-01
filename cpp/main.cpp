@@ -143,12 +143,12 @@ private:
 };
 
 int main(int argc, char **argv) {
-    if (argc == 1) {
+    if (argc == 1) { // server
         defaultServiceManager()->addService(String16(BINDER_NAME), new Test());
         ProcessState::self()->startThreadPool();
         INFO("server: This is TestServer");
         IPCThreadState::self()->joinThreadPool();
-    } else if (strcmp(argv[1], "inout") == 0) {
+    } else { // client
         sp<ProcessState> proc(ProcessState::self());
         ProcessState::self()->startThreadPool();
         INFO("client: We're the client, inout test");
@@ -159,52 +159,48 @@ int main(int argc, char **argv) {
         sp<demo::ITest> test = interface_cast<demo::ITest>(binder);
         ASSERT(test != 0);
 
-        os::PersistableBundle data_in;
-        data_in.putString(String16("data"),String16( "client"));
-        test->sendIn(data_in);
-        String16 ret_in;
-        data_in.getString(String16("data"), &ret_in);
-        INFO("client: after sendIn: %s", String8(ret_in).string());
+        if (strcmp(argv[1], "inout") == 0) {
+            os::PersistableBundle data_in;
+            data_in.putString(String16("data"),String16( "client"));
+            test->sendIn(data_in);
+            String16 ret_in;
+            data_in.getString(String16("data"), &ret_in);
+            INFO("client: after sendIn: %s", String8(ret_in).string());
 
-        os::PersistableBundle data_out;
-        data_out.putString(String16("data"),String16( "client"));
-        test->sendOut(&data_out);
-        String16 ret_out;
-        data_out.getString(String16("data"), &ret_out);
-        INFO("client: after sendOut: %s", String8(ret_out).string());
+            os::PersistableBundle data_out;
+            data_out.putString(String16("data"),String16( "client"));
+            test->sendOut(&data_out);
+            String16 ret_out;
+            data_out.getString(String16("data"), &ret_out);
+            INFO("client: after sendOut: %s", String8(ret_out).string());
 
-        os::PersistableBundle data_inout;
-        data_inout.putString(String16("data"),String16( "client"));
-        test->sendInOut(&data_inout);
-        String16 ret_inout;
-        data_inout.getString(String16("data"), &ret_inout);
-        INFO("client: after sendInOut: %s", String8(ret_inout).string());
-    } else if (argc == 3) {
-        sp<ProcessState> proc(ProcessState::self());
-        ProcessState::self()->startThreadPool();
-        INFO("client: We're the client");
-        sp<IServiceManager> sm = defaultServiceManager();
-        ASSERT(sm != 0);
-        sp<IBinder> binder = sm->getService(String16(BINDER_NAME));
-        ASSERT(binder != 0);
-        sp<TestDeathRecipient> death = new TestDeathRecipient();
-        int link = binder->linkToDeath(death);
-        ASSERT(link == 0);
-        sp<demo::ITest> test = interface_cast<demo::ITest>(binder);
-        ASSERT(test != 0);
+            os::PersistableBundle data_inout;
+            data_inout.putString(String16("data"),String16( "client"));
+            test->sendInOut(&data_inout);
+            String16 ret_inout;
+            data_inout.getString(String16("data"), &ret_inout);
+            INFO("client: after sendInOut: %s", String8(ret_inout).string());
+        } else if (strcmp(argv[1], "oneway") == 0) {
+            INFO("client: ping start, sleep 5s");
+            test->ping();
+            INFO("client: ping end");
+            INFO("client: ping one-way start, sleep 5s");
+            test->pingOneway();
+            INFO("client: ping one-way end");
+        } else if (argc == 3) {
+            int ret = 0;
+            test->sum(atoi(argv[1]), atoi(argv[2]), &ret);
+            INFO("client: We're the client: test->sum return: %d", ret);
 
-        int ret = 0;
-        test->sum(atoi(argv[1]), atoi(argv[2]), &ret);
-        INFO("client: We're the client: test->sum return: %d", ret);
+            sp<CallbackTest> callback = new CallbackTest();
+            test->registerCallback(callback);
+            INFO("client: ping, 5s callback");
+            test->ping();
 
-        sp<CallbackTest> callback = new CallbackTest();
-        test->registerCallback(callback);
-        INFO("client: ping, 5s callback");
-        test->ping();
-
-        test->unregisterCallback(callback);
-        INFO("client: ping again, 5s callback");
-        test->ping();
+            test->unregisterCallback(callback);
+            INFO("client: ping again, 5s callback");
+            test->ping();
+        }
         IPCThreadState::self()->joinThreadPool();
     }
     return 0;

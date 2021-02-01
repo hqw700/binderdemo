@@ -20,7 +20,9 @@ public class Main {
             ServiceManager.addService(BINDER_NAME, testServer);
         } else if ("inout".equals(args[0])){
             inoutTest();
-        }else {
+        } else if ("oneway".equals(args[0])){
+            onewayTest();
+        } else {
             Log.d(TAG_C, "This is TestClient");
             ITest testClient = ITest.Stub.asInterface(ServiceManager.getService(BINDER_NAME));
             if (testClient == null) {
@@ -28,7 +30,6 @@ public class Main {
                 System.exit(-1);
             }
             try {
-
                 int v1 = Integer.parseInt(args[0]);
                 int v2 = Integer.parseInt(args[1]);
                 Log.d(TAG_C, String.format("sum (%d,%d)", v1, v2));
@@ -59,6 +60,26 @@ public class Main {
             }
         }
         for (;;);
+    }
+
+    private static void onewayTest() {
+        Log.d(TAG_C, "This is TestClient");
+        ITest testClient = ITest.Stub.asInterface(ServiceManager.getService(BINDER_NAME));
+        if (testClient == null) {
+            System.err.println("TestServer is null");
+            System.exit(-1);
+        }
+
+        try {
+            Log.d(TAG_C, "ping start, sleep 5s");
+            testClient.ping();
+            Log.d(TAG_C, "ping end");
+            Log.d(TAG_C, "ping one-way start, sleep 5s");
+            testClient.pingOneway();
+            Log.d(TAG_C, "ping one-way end");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void inoutTest() {
