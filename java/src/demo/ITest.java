@@ -58,9 +58,9 @@ public interface ITest extends android.os.IInterface {
                 }
                 case TRANSACTION_sendIn: {
                     data.enforceInterface(DESCRIPTOR);
-                    android.os.Bundle _arg0;
+                    demo.BinderData _arg0;
                     if ((0 != data.readInt())) {
-                        _arg0 = android.os.Bundle.CREATOR.createFromParcel(data);
+                        _arg0 = demo.BinderData.CREATOR.createFromParcel(data);
                     } else {
                         _arg0 = null;
                     }
@@ -70,8 +70,8 @@ public interface ITest extends android.os.IInterface {
                 }
                 case TRANSACTION_sendOut: {
                     data.enforceInterface(DESCRIPTOR);
-                    android.os.Bundle _arg0;
-                    _arg0 = new android.os.Bundle();
+                    demo.BinderData _arg0;
+                    _arg0 = new demo.BinderData();
                     this.sendOut(_arg0);
                     reply.writeNoException();
                     if ((_arg0 != null)) {
@@ -84,9 +84,9 @@ public interface ITest extends android.os.IInterface {
                 }
                 case TRANSACTION_sendInOut: {
                     data.enforceInterface(DESCRIPTOR);
-                    android.os.Bundle _arg0;
+                    demo.BinderData _arg0;
                     if ((0 != data.readInt())) {
-                        _arg0 = android.os.Bundle.CREATOR.createFromParcel(data);
+                        _arg0 = demo.BinderData.CREATOR.createFromParcel(data);
                     } else {
                         _arg0 = null;
                     }
@@ -173,7 +173,7 @@ public interface ITest extends android.os.IInterface {
             }
 
             @Override
-            public void sendIn(android.os.Bundle data) throws android.os.RemoteException {
+            public void sendIn(demo.BinderData data) throws android.os.RemoteException {
                 android.os.Parcel _data = android.os.Parcel.obtain();
                 android.os.Parcel _reply = android.os.Parcel.obtain();
                 try {
@@ -193,7 +193,7 @@ public interface ITest extends android.os.IInterface {
             }
 
             @Override
-            public void sendOut(android.os.Bundle data) throws android.os.RemoteException {
+            public void sendOut(demo.BinderData data) throws android.os.RemoteException {
                 android.os.Parcel _data = android.os.Parcel.obtain();
                 android.os.Parcel _reply = android.os.Parcel.obtain();
                 try {
@@ -210,7 +210,7 @@ public interface ITest extends android.os.IInterface {
             }
 
             @Override
-            public void sendInOut(android.os.Bundle data) throws android.os.RemoteException {
+            public void sendInOut(demo.BinderData data) throws android.os.RemoteException {
                 android.os.Parcel _data = android.os.Parcel.obtain();
                 android.os.Parcel _reply = android.os.Parcel.obtain();
                 try {
@@ -296,11 +296,11 @@ public interface ITest extends android.os.IInterface {
 
     public void pingOneway() throws android.os.RemoteException;
 
-    public void sendIn(android.os.Bundle data) throws android.os.RemoteException;
+    public void sendIn(demo.BinderData data) throws android.os.RemoteException;
 
-    public void sendOut(android.os.Bundle data) throws android.os.RemoteException;
+    public void sendOut(demo.BinderData data) throws android.os.RemoteException;
 
-    public void sendInOut(android.os.Bundle data) throws android.os.RemoteException;
+    public void sendInOut(demo.BinderData data) throws android.os.RemoteException;
 
     public int sum(int x, int y) throws android.os.RemoteException;
 

@@ -31,24 +31,24 @@ public class TestServer extends ITest.Stub {
     }
 
     @Override
-    public void sendIn(Bundle data) throws RemoteException {
-        String rec = data.getString("data");
+    public void sendIn(BinderData data) throws RemoteException {
+        String rec = data.getName();
         Log.d(TAG, "sendIn: receive: " + rec);
-        data.putString("data", rec + "server");
+        data.setName(rec + "server");
     }
 
     @Override
-    public void sendOut(Bundle data) throws RemoteException {
-        String rec = data.getString("data");
-        Log.d(TAG, "sendOut: receive: " + rec);
-        data.putString("data", rec + "server");
+    public void sendOut(BinderData data) throws RemoteException {
+        String rec = data.getName();
+        Log.d(TAG, "sendIn: receive: " + rec);
+        data.setName(rec + "server");
     }
 
     @Override
-    public void sendInOut(Bundle data) throws RemoteException {
-        String rec = data.getString("data");
-        Log.d(TAG, "sendInOut: receive: " + rec);
-        data.putString("data", rec + "server");
+    public void sendInOut(BinderData data) throws RemoteException {
+        String rec = data.getName();
+        Log.d(TAG, "sendIn: receive: " + rec);
+        data.setName(rec + "server");
     }
 
     @Override

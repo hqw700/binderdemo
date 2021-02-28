@@ -91,20 +91,20 @@ public class Main {
         }
 
         try {
-            Bundle data_in = new Bundle();
-            data_in.putString("data", "client");
+            BinderData data_in = new BinderData();
+            data_in.setName("client");
             testClient.sendIn(data_in);
-            Log.d(TAG_C, "after sendIn: " + data_in.getString("data"));
+            Log.d(TAG_C, "after sendIn: " + data_in.getName());
 
-            Bundle data_out = new Bundle();
-            data_out.putString("data", "client");
+            BinderData data_out = new BinderData();
+            data_out.setName("client");
             testClient.sendOut(data_out);
-            Log.d(TAG_C, "after sendOut: " + data_out.getString("data"));
+            Log.d(TAG_C, "after sendOut: " + data_out.getName());
 
-            Bundle data_inout = new Bundle();
-            data_inout.putString("data", "client");
+            BinderData data_inout = new BinderData();
+            data_inout.setName("client");
             testClient.sendInOut(data_inout);
-            Log.d(TAG_C, "after sendInOut: " + data_inout.getString("data"));
+            Log.d(TAG_C, "after sendInOut: " + data_inout.getName());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
