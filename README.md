@@ -4,3 +4,4 @@
 + 第三部分: [**cpp/java端的死亡讣告与dump的简单示例**](https://hqw700.github.io/2021/01/21/binder_die/): 重写cpp和java端binder死亡回调与dump接口
 + 第四部分: [**java/cpp端回调的简单示例**](https://hqw700.github.io/2021/01/26/binder_callback/): 新建aidl回调接口，用工具生成代码，并实现java/cpp服务端和测试代码。
 + 第五部分: [**in/out/inout以及oneway的简单示例**](https://hqw700.github.io/2021/02/19/binder_in_out/): binder aidl接口关键字的简单用法和区别。
++ 第六部分: [**最简单的binder调用**](https://hqw700.github.io/2022/10/24/binder_simplest_call/): 最简单的binder调用代码示例。
